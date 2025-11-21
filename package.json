@@ -1,6 +1,6 @@
 {
     "name": "@bachstudio/mcp-google-maps",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "type": "module",
     "description": "MCP Google Maps HTTP server with comprehensive Google Maps integration",
     "main": "dist/index.cjs",
