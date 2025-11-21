@@ -1,6 +1,6 @@
 {
-    "name": "mcp-google-maps",
-    "version": "0.1.0",
+    "name": "@bachstudio/mcp-google-maps",
+    "version": "0.1.4",
     "type": "module",
     "description": "MCP Google Maps HTTP server with comprehensive Google Maps integration",
     "main": "dist/index.cjs",
@@ -33,7 +33,7 @@
         "typescript": "^5.3.3"
     },
     "bin": {
-        "mcp-google-maps": "./dist/index.cjs"
+        "bachstudio-mcp-google-maps": "./dist/index.cjs"
     },
     "files": [
         "dist",
@@ -58,6 +58,6 @@
         "directions",
         "geocoding"
     ],
-    "author": "artixz",
+    "author": "bachstudio",
     "license": "MIT"
 }

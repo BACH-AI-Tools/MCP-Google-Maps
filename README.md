@@ -1,6 +1,8 @@
-# MCP Google Maps [![MCP-Google-Maps](https://img.shields.io/badge/GitHub-MCPGoogleMaps-informational?style=flat&logo=github&logoColor=white&color=181717)](https://github.com/ArtixZ/MCP-Google-Maps.git)
+# MCP Google Maps [![MCP-Google-Maps](https://img.shields.io/badge/GitHub-MCPGoogleMaps-informational?style=flat&logo=github&logoColor=white&color=181717)](https://github.com/BACH-AI-Tools/MCP-Google-Maps.git)
 
 A Model Context Protocol (MCP) server for Google Maps functionality, providing access to places search, geocoding, directions, and more through the MCP interface.
+
+> **基于原项目**: 此项目基于 [ArtixZ/MCP-Google-Maps](https://github.com/ArtixZ/MCP-Google-Maps) 修改而来
 
 ## Features
 
@@ -17,13 +19,13 @@ A Model Context Protocol (MCP) server for Google Maps functionality, providing a
 First, install the package globally:
 
 ```bash
-npm install -g mcp-google-maps
+npm install -g @bachstudio/mcp-google-maps
 ```
 
 You can test if the MCP server is working by running:
 
 ```bash
-npx mcp-google-maps
+npx bachstudio-mcp-google-maps
 ```
 
 ## MCP Configuration
@@ -35,7 +37,7 @@ To use this with your MCP client, add the following to your MCP configuration:
     "mcpServers": {
         "google-maps": {
             "command": "npx",
-            "args": ["-y", "mcp-google-maps"],
+            "args": ["-y", "@bachstudio/mcp-google-maps"],
             "env": {
                 "GOOGLE_MAPS_API_KEY": "your_api_key_here",
                 "DEFAULT_LANGUAGE": "en",
@@ -70,4 +72,8 @@ MIT
 
 ## Author
 
-artixz
+bachstudio
+
+## Credits
+
+Based on the original project by [artixz](https://github.com/ArtixZ/MCP-Google-Maps)
