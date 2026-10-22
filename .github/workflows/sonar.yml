@@ -1,12 +1,9 @@
 name: SonarQube Analysis
 
 on:
-  workflow_dispatch:  # 支持手动触发
+  workflow_dispatch:
   push:
-    branches:
-      - main
-      - master
-      - develop
+    branches: [main, master, develop]
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -14,13 +11,13 @@ jobs:
   sonarqube:
     name: SonarQube Scan
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
 
+      # 扫描并等待质量门禁：门禁不通过，这一步失败，PR 不能合并
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v3
         env:
@@ -30,10 +27,5 @@ jobs:
           args: >
             -Dsonar.projectKey=BACH-AI-Tools_MCP-Google-Maps
             -Dsonar.projectName=MCP-Google-Maps
-
-      # Optional: Fail the build if Quality Gate fails
-      # - name: SonarQube Quality Gate check
-      #   uses: SonarSource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.qualitygate.timeout=300
