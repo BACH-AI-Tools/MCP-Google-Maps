@@ -1,0 +1,58 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please fill in the sections below so we can reproduce and fix it.
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      description: Which version of @bachstudio/mcp-google-maps are you using?
+      placeholder: e.g. 0.1.5
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Node.js version, and MCP client (e.g. Claude Desktop, Cursor)
+      placeholder: |
+        - OS: macOS 14
+        - Node.js: v20.11.0
+        - MCP client: Claude Desktop
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The exact steps to trigger the issue
+      placeholder: |
+        1. Configure the server with ...
+        2. Ask the MCP client to ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / error output
+      description: Paste any error messages or logs here. Please remove any API keys or secrets before posting.
+      render: shell
