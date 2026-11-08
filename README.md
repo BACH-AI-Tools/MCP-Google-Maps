@@ -16,6 +16,8 @@ A Model Context Protocol (MCP) server for Google Maps functionality, providing a
 
 ## Installation & Testing
 
+Requires Node.js 18 or newer (the bundled MCP SDK does not support older versions).
+
 First, install the package globally:
 
 ```bash
