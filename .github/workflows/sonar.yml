@@ -41,6 +41,26 @@ jobs:
           args: >
             -Dsonar.projectKey=BACH-AI-Tools_MCP-Google-Maps
             -Dsonar.projectName=MCP-Google-Maps
+            -Dsonar.projectVersion=${{ github.sha }}
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=300
             -Dsonar.scanner.skipJreProvisioning=true
+
+      # 门禁没过时，把没达标的指标直接列在这里（PR 的检查页上就能看到），不用登录 Sonar
+      - name: Show failed quality gate conditions
+        if: failure()
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          q="projectKey=BACH-AI-Tools_MCP-Google-Maps"
+          task=$(sed -n 's/^ceTaskId=//p' .scannerwork/report-task.txt 2>/dev/null)
+          if [ -n "$task" ]; then
+            aid=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/ce/task?id=$task" | jq -r '.task.analysisId // empty')
+            [ -n "$aid" ] && q="analysisId=$aid"
+          fi
+          curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?$q" | jq -r '
+            .projectStatus as $s
+            | "新代码起点: \($s.period.mode // "-") \($s.period.parameter // "") \($s.period.date // "")",
+              ($s.conditions[] | select(.status == "ERROR")
+               | "::error title=质量门禁没过::\(.metricKey) = \(.actualValue)（要求 \(if .comparator == "GT" then "≤" else "≥" end) \(.errorThreshold)）")'
