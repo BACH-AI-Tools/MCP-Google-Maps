@@ -41,17 +41,15 @@ To use this with your MCP client, add the following to your MCP configuration:
             "env": {
                 "GOOGLE_MAPS_API_KEY": "your_api_key_here",
                 "DEFAULT_LANGUAGE": "en",
-                "DEFAULT_REGION": "US",
-                "MAX_REQUESTS_PER_SECOND": "50",
-                "MAX_REQUESTS_PER_DAY": "100000",
-                "ENABLE_CACHING": "true",
-                "CACHE_TTL": "3600"
+                "DEFAULT_REGION": "US"
             },
             "enabled": true
         }
     }
 }
 ```
+
+> **Note:** this server does not cache responses or throttle requests — every tool call is sent to the Google Maps Platform and billed against your key. To cap cost, set quotas for the key in the Google Cloud console.
 
 ## Available MCP Commands
 
