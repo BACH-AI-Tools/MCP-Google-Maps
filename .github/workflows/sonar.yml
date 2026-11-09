@@ -30,6 +30,13 @@ jobs:
           key: sonar-cache-${{ runner.os }}-${{ github.run_id }}
           restore-keys: sonar-cache-${{ runner.os }}-
 
+      # 先跑测试生成覆盖率报告交给 Sonar（门禁要求新代码覆盖率 ≥ 80%）；没有测试或测试失败都不挡扫描，结论由门禁判
+      - name: Test coverage for Sonar
+        continue-on-error: true
+        run: |
+          npm install --ignore-scripts --no-audit --no-fund
+          npx --no-install jest --coverage --coverageReporters=lcovonly --passWithNoTests
+
       # 扫描并等待质量门禁：门禁不通过，这一步失败，PR 不能合并
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
@@ -45,6 +52,9 @@ jobs:
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=300
             -Dsonar.scanner.skipJreProvisioning=true
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.exclusions=coverage/**
+            -Dsonar.coverage.exclusions=tests/**,**/*.test.*,**/*.spec.*,**/*.config.*,dist/**,scripts/**
 
       # 门禁没过时，把没达标的指标直接列在这里（PR 的检查页上就能看到），不用登录 Sonar
       - name: Show failed quality gate conditions
