@@ -7,6 +7,11 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+# 同一个分支 / PR 又推了新提交：取消还没跑完的旧扫描，不让过时的扫描占着 Sonar 服务器
+concurrency:
+  group: sonar-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
 jobs:
   sonarqube:
     name: SonarQube Scan
@@ -17,10 +22,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      # 缓存扫描引擎和插件：公司 Sonar 服务器出口慢，每次重新下载要 10 分钟以上；缓存后只有第一次需要下载
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/sonar-home/cache
+          key: sonar-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: sonar-cache-${{ runner.os }}-
+
       # 扫描并等待质量门禁：门禁不通过，这一步失败，PR 不能合并
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v3
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
+          SONAR_USER_HOME: ${{ runner.temp }}/sonar-home
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
@@ -29,3 +43,4 @@ jobs:
             -Dsonar.projectName=MCP-Google-Maps
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=300
+            -Dsonar.scanner.skipJreProvisioning=true
