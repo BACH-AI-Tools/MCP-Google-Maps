@@ -1,12 +1,23 @@
 import { TravelMode } from "@googlemaps/google-maps-services-js";
 import { ServiceResponse } from "../types";
-import { handleError } from "../utils/error-handling";
+import { handleError, validateCoordinates } from "../utils/error-handling";
 import config from "../config/environment";
 
 export interface Location {
     address: string;
     lat: number;
     lng: number;
+}
+
+function isValidLocation(loc: Location | undefined): loc is Location {
+    return (
+        !!loc &&
+        !!loc.address &&
+        typeof loc.lat === "number" &&
+        Number.isFinite(loc.lat) &&
+        typeof loc.lng === "number" &&
+        Number.isFinite(loc.lng)
+    );
 }
 
 export interface MapDirectionsParams {
@@ -110,21 +121,12 @@ export class MapDirectionsService {
         params: MapDirectionsParams
     ): Promise<ServiceResponse<MapDirectionsResponse>> {
         try {
-            // Validate required fields
-            if (
-                !params.origin ||
-                !params.origin.lat ||
-                !params.origin.lng ||
-                !params.origin.address
-            ) {
+            // Validate required fields. Use explicit numeric checks: 0 is a
+            // valid latitude/longitude (equator, prime meridian).
+            if (!isValidLocation(params.origin)) {
                 throw new Error("Origin must include address, lat, and lng");
             }
-            if (
-                !params.destination ||
-                !params.destination.lat ||
-                !params.destination.lng ||
-                !params.destination.address
-            ) {
+            if (!isValidLocation(params.destination)) {
                 throw new Error(
                     "Destination must include address, lat, and lng"
                 );
@@ -133,12 +135,20 @@ export class MapDirectionsService {
             // Validate waypoints if provided
             if (params.waypoints) {
                 for (const wp of params.waypoints) {
-                    if (!wp.lat || !wp.lng || !wp.address) {
+                    if (!isValidLocation(wp)) {
                         throw new Error(
                             "Each waypoint must include address, lat, and lng"
                         );
                     }
                 }
+            }
+
+            for (const loc of [
+                params.origin,
+                ...(params.waypoints || []),
+                params.destination,
+            ]) {
+                validateCoordinates(loc.lat, loc.lng);
             }
 
             // Generate URLs
